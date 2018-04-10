@@ -1,0 +1,1 @@
+include ':app', ':client-api', ':client-annotaion', ':client-register', ':client-compiler'
