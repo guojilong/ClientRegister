@@ -7,4 +7,5 @@ public class Consts {
     public static final String PROJECT = "ClientRegister";
 
     public static final String PREFIX_OF_LOGGER = PROJECT + "::Compiler ";
+    public static final String ANNOTATION_TYPE_CLIENT= "com.gjl.client.annotation.Client";
 }

@@ -3,7 +3,6 @@ package com.gjl.client.compiler.processor;
 import com.gjl.client.annotation.Client;
 import com.gjl.client.compiler.processor.utils.Logger;
 import com.google.auto.service.AutoService;
-import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -19,15 +18,22 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 
+import static com.gjl.client.compiler.processor.utils.Consts.ANNOTATION_TYPE_CLIENT;
+
 /**
  * Created by guojilong on 2018/4/11.
  */
 @AutoService(Processor.class)
+@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@SupportedAnnotationTypes(ANNOTATION_TYPE_CLIENT)
 public class ClientProcessor extends AbstractProcessor {
     private Elements mElements;
     private Logger logger;
@@ -37,6 +43,8 @@ public class ClientProcessor extends AbstractProcessor {
         super.init(processingEnvironment);
         mElements = processingEnv.getElementUtils();
         logger = new Logger(processingEnvironment.getMessager());
+
+        logger.info("init");
 
     }
 
@@ -55,6 +63,17 @@ public class ClientProcessor extends AbstractProcessor {
             return true;
         }
         return false;
+    }
+
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
+
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        return super.getSupportedAnnotationTypes();
     }
 
     private void parseClients(Set<? extends Element> routeElements) throws IOException {
@@ -79,11 +98,11 @@ public class ClientProcessor extends AbstractProcessor {
 //            String packgeName = mElements.getPackageOf(routeElements).getQualifiedName().toString();
 
             FieldSpec fieldSpec = FieldSpec.builder(TypeName.INT, routeElement.getAnnotation(Client.class).name(), Modifier.PUBLIC)
-                    .initializer("%d", clientIndex).build();
+                    .initializer("$L", clientIndex).build();
 
             clientIndex++;
             classBuilder.addField(fieldSpec);
-            classBuilder.addMethod(main);
+            //classBuilder.addMethod(main);
         }
 
 
